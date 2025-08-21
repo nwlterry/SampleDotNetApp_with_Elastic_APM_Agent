@@ -224,12 +224,16 @@ CipherString = DEFAULT@SECLEVEL=2
     }
   },
   "ElasticApm": {
+    "Enabled": false,
+    "ServerUrls": "",
+    "TransactionSampleRate": 1.0,
+    "CloudProvider": "none",
+    "EnableOpenTelemetryBridge": true,
     "ServiceName": "SampleDotNetApp",
     "Environment": "development",
-    "TransactionSampleRate": 1.0,
-    "LogLevel": "Trace",
-    "ServerUrls": "<your-apm-server-url>", // e.g., https://apm-server.example.com:8200
-    "SecretToken": "<your-apm-secret-token-if-required>" // Optional
+    "LogLevel": "Trace"
+    //"ServerUrls": "<your-apm-server-url>", // e.g., http://apm-server.example.com:8200
+    //"SecretToken": "<your-apm-secret-token-if-required>" // Optional
   }
 }
 ```
@@ -243,7 +247,7 @@ CipherString = DEFAULT@SECLEVEL=2
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.27.3" />
+    <PackageReference Include="Elastic.Apm.NetCoreAll" Version="1.25.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.3" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
   </ItemGroup>
@@ -276,11 +280,14 @@ RUN dotnet publish "SampleDotNetApp.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
 # Add CA certificates and custom OpenSSL config
 RUN apt-get update && apt-get install -y ca-certificates openssl
 COPY openssl.cnf /etc/ssl/openssl.cnf
 RUN update-ca-certificates
+
 ENV OPENSSL_CONF=/etc/ssl/openssl.cnf
+
 ENTRYPOINT ["dotnet", "SampleDotNetApp.dll"]
 ```
 
