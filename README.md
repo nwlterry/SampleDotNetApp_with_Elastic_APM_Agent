@@ -1,5 +1,14 @@
 # Sample .NET 8.0 Application with Elastic APM for OpenShift
 
+## Layout
+
+```
+SampleDotNetApp/   # .NET app, csproj, Dockerfile, APM logger bridge
+GROUP.md
+README.md
+```
+
+
 This ASP.NET Core Web API targets .NET 8.0.1, integrates with Elastic APM, and is configured for deployment on OpenShift. It connects to an existing APM Server and Elasticsearch and includes a sample trace with a "messaging" transaction type. The changes add a custom `openssl.cnf` to the Docker image to set `CipherString = DEFAULT@SECLEVEL=2`, fix the Swagger 404 error, and ensure the correct APM Server URL to resolve connection issues.
 
 ## Program.cs
